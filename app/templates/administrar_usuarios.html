@@ -1,55 +1,84 @@
-{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard de Usuários e Freteiros</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 30px; }
+        h1, h2 { margin-bottom: 15px; }
+        table { border-collapse: collapse; width: 100%; margin-bottom: 30px; }
+        th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+        th { background-color: #f0f0f0; }
+        form { margin-bottom: 20px; }
+        input[type="text"] { padding: 5px; width: 250px; }
+        button, a.button { padding: 5px 10px; margin-right: 5px; text-decoration: none; color: white; border: none; border-radius: 3px; }
+        button { cursor: pointer; }
+        .edit { background-color: #3498db; }
+        .delete { background-color: #e74c3c; }
+    </style>
+</head>
+<body>
 
-<div class="usuarios-lista">
-    <h2>Usuários</h2>
-    <table border="1" cellpadding="5">
-        <tr>
-            <th>Nome</th>
-            <th>Email</th>
-            <th>CPF</th>
-            <th>Ações</th> <!-- nova coluna -->
-        </tr>
-        {% for usuario in usuarios %}
-        <tr>
-            <td>{{ usuario.nome }}</td>
-            <td>{{ usuario.email }}</td>
-            <td>{{ usuario.cpf }}</td>
-            <td>
-                <a href="{% url 'update_geral' 'usuario' usuario.id %}">Editar</a> |
-                <a href="{% url 'excluir_geral' 'usuario' usuario.id %}">Excluir</a>
-            </td>
-        </tr>
-        {% empty %}
-        <tr>
-            <td colspan="4">Nenhum usuário cadastrado.</td>
-        </tr>
-        {% endfor %}
-    </table>
-</div>
+<h1>Dashboard de Usuários e Freteiros</h1>
 
-<div class="freteiros-lista">
-    <h2>Freteiros</h2>
-    <table border="1" cellpadding="5">
-        <tr>
-            <th>Nome</th>
-            <th>Email</th>
-            <th>CPF</th>
-            <th>Ações</th> <!-- nova coluna -->
-        </tr>
-        {% for freteiro in freteiros %}
-        <tr>
-            <td>{{ freteiro.nome }}</td>
-            <td>{{ freteiro.email }}</td>
-            <td>{{ freteiro.cpf }}</td>
-            <td>
-                <a href="{% url 'update_geral' 'freteiro' freteiro.id %}">Editar</a> |
-                <a href="{% url 'excluir_geral' 'freteiro' freteiro.id %}">Excluir</a>
-            </td>
-        </tr>
-        {% empty %}
-        <tr>
-            <td colspan="4">Nenhum freteiro cadastrado.</td>
-        </tr>
-        {% endfor %}
-    </table>
-</div>
+<!-- Campo de pesquisa -->
+<form method="get">
+    <input type="text" name="q" placeholder="Pesquisar por nome, email ou CPF" value="{{ query }}">
+    <button type="submit">Pesquisar</button>
+</form>
+
+<!-- Lista de Usuários -->
+<h2>Usuários</h2>
+<table>
+    <tr>
+        <th>Nome</th>
+        <th>Email</th>
+        <th>CPF</th>
+        <th>Ações</th>
+    </tr>
+    {% for usuario in usuarios %}
+    <tr>
+        <td>{{ usuario.nome }}</td>
+        <td>{{ usuario.email }}</td>
+        <td>{{ usuario.cpf }}</td>
+        <td>
+           <a href="{% url 'update_geral' 'usuario' usuario.id %}" class="button edit">Editar</a>
+            <a href="{% url 'excluir_geral' 'usuario' usuario.id %}" class="button delete">Excluir</a>
+
+        </td>
+    </tr>
+    {% empty %}
+    <tr>
+        <td colspan="4">Nenhum usuário encontrado.</td>
+    </tr>
+    {% endfor %}
+</table>
+
+<!-- Lista de Freteiros -->
+<h2>Freteiros</h2>
+<table>
+    <tr>
+        <th>Nome</th>
+        <th>Email</th>
+        <th>CPF</th>
+        <th>Ações</th>
+    </tr>
+    {% for freteiro in freteiros %}
+    <tr>
+        <td>{{ freteiro.nome }}</td>
+        <td>{{ freteiro.email }}</td>
+        <td>{{ freteiro.cpf }}</td>
+        <td>
+            <a href="{% url 'update_geral' 'freteiro' freteiro.id %}" class="button edit">Editar</a>
+            <a href="{% url 'excluir_geral' 'freteiro' freteiro.id %}" class="button delete">Excluir</a>
+        </td>
+    </tr>
+    {% empty %}
+    <tr>
+        <td colspan="4">Nenhum freteiro encontrado.</td>
+    </tr>
+    {% endfor %}
+</table>
+
+</body>
+</html>

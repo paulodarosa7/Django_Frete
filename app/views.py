@@ -107,14 +107,31 @@ def cadastro_freteiro(request):
 
 # Administração geral
 def listar_usuarios_geral(request):
-    freteiros = Freteiro.objects.all()
-    usuarios = Usuario.objects.all()
-    pessoas = {
-        'freteiros': freteiros,
-        'usuarios': usuarios
-    }
+    query = request.GET.get('q', '')  # pega o valor do campo de pesquisa
+
+    if query:
+        # Filtra por nome ou email contendo o texto
+        usuarios = Usuario.objects.filter(
+            nome__icontains=query
+        ) | Usuario.objects.filter(
+            email__icontains=query
+        )
+        freteiros = Freteiro.objects.filter(
+            nome__icontains=query
+        ) | Freteiro.objects.filter(
+            email__icontains=query
+        )
+    else:
         
-    return render(request, 'administrar_usuarios.html', pessoas)
+        freteiros = Freteiro.objects.all()
+        usuarios = Usuario.objects.all()
+        
+    return render(request, 'administrar_usuarios.html', {
+        'freteiros': freteiros,
+        'usuarios': usuarios,
+        'query': query
+    })
+        
 
 
 def update_geral(request, id, tipo):
@@ -142,9 +159,9 @@ def update_geral(request, id, tipo):
 
 def excluir_geral(request, id, tipo):
     if tipo == 'freteiro':
-        post = get_object_or_404(Freteiro, id=id)
+        post = get_object_or_404(Freteiro, id=id) #xconsulta de freteiro
     elif tipo == 'usuario':
-        post = get_object_or_404(Usuario, id=id)
+        post = get_object_or_404(Usuario, id=id) # consulta de usuario
     else:
         return redirect('listar_usuarios_geral')
 
@@ -156,5 +173,9 @@ def excluir_geral(request, id, tipo):
         'post': post,
         'tipo': tipo
     })
+    
+def listar_por_cidade(request, cidade):
+    freteiros = Freteiro.objects.filter(cidade__iexact=cidade)
+    return render(request, 'listar_por_cidade.html', {'freteiros': freteiros, 'cidade': cidade})
   
 
