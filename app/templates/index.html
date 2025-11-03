@@ -1,0 +1,28 @@
+{% load static %}
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FretesExpress</title>
+
+  <!-- Fonte Google Kaushan Script -->
+  <link href="https://fonts.googleapis.com/css2?family=Kaushan+Script&display=swap" rel="stylesheet">
+
+  <!-- CSS externo via Django static -->
+  <link rel="stylesheet" href="{% static 'css/inicio.css' %}">
+</head>
+<body>
+  <!-- Splash -->
+  <div id="splash">
+    <h1 class="logo">FretesExpress</h1>
+    <img id="background" src="{% static 'img/download.png' %}" alt="skyline">
+  </div>
+
+  <script>
+    setTimeout(() => {
+      window.location.href = "{% url 'login_user' %}";
+    }, 4000);
+  </script>
+  
+</body>
+</html>

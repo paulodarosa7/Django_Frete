@@ -1,0 +1,55 @@
+{% load static %}
+
+<div class="usuarios-lista">
+    <h2>Usuários</h2>
+    <table border="1" cellpadding="5">
+        <tr>
+            <th>Nome</th>
+            <th>Email</th>
+            <th>CPF</th>
+            <th>Ações</th> <!-- nova coluna -->
+        </tr>
+        {% for usuario in usuarios %}
+        <tr>
+            <td>{{ usuario.nome }}</td>
+            <td>{{ usuario.email }}</td>
+            <td>{{ usuario.cpf }}</td>
+            <td>
+                <a href="{% url 'update_geral' 'usuario' usuario.id %}">Editar</a> |
+                <a href="{% url 'excluir_geral' 'usuario' usuario.id %}">Excluir</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="4">Nenhum usuário cadastrado.</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+
+<div class="freteiros-lista">
+    <h2>Freteiros</h2>
+    <table border="1" cellpadding="5">
+        <tr>
+            <th>Nome</th>
+            <th>Email</th>
+            <th>CPF</th>
+            <th>Ações</th> <!-- nova coluna -->
+        </tr>
+        {% for freteiro in freteiros %}
+        <tr>
+            <td>{{ freteiro.nome }}</td>
+            <td>{{ freteiro.email }}</td>
+            <td>{{ freteiro.cpf }}</td>
+            <td>
+                <a href="{% url 'update_geral' 'freteiro' freteiro.id %}">Editar</a> |
+                <a href="{% url 'excluir_geral' 'freteiro' freteiro.id %}">Excluir</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="4">Nenhum freteiro cadastrado.</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>

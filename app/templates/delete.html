@@ -1,0 +1,23 @@
+{% load static %}
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Excluir {{ tipo|capfirst }}</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 30px; }
+        button { padding: 8px 15px; margin-right: 10px; cursor: pointer; }
+        .danger { background-color: #e74c3c; color: white; border: none; }
+        .cancel { background-color: #95a5a6; color: white; border: none; }
+    </style>
+</head>
+<body>
+    <h1>Excluir {{ tipo|capfirst }}: {{ post.nome }}</h1>
+    <p>Tem certeza que deseja excluir <b>{{ post.nome }}</b>?</p>
+
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="danger">Sim, excluir</button>
+        <a href="{% url 'listar_usuarios_geral' %}"><button type="button" class="cancel">Cancelar</button></a>
+    </form>
+</body>
+</html>
