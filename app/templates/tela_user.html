@@ -17,15 +17,18 @@
       <a href="{% url 'login_freteiro' %}" class="{% if active == 'motorista' %}active{% endif %}" id="btnMotorista">motorista</a>
   </div>
 
-    <div id="usuarioTela" class="loginTela">
-      <p class="title">painel de bordo</p>
-      <input type="email" placeholder="e-mail">
-      <input type="password" placeholder="senha">
-      <button class="btnInicio" onclick="window.location.href='{% url 'welcome_user' %}'">acessar</button>
+    <form action="{% url 'login_user' %}" method="POST">
+      {% csrf_token %}
+        <div id="usuarioTela" class="loginTela">
+          <p class="title">painel de bordo</p>
+          <input name="email" type="email" placeholder="e-mail">
+          <input name="senha" type="password" placeholder="senha">
+          <button class="btnInicio" type="submit">acessar</button>
 
-      <a href="{% url 'cadastro_user' %}" class="cadastro_usuario">cadastre-se</a>
-      <a href="{% url 'cadastro_freteiro' %}" class="cadastro_freteiro">torne-se um freteiro!</a>
-    </div>
+          <a href="{% url 'cadastro_user' %}" class="cadastro_usuario">cadastre-se</a>
+          <a href="{% url 'cadastro_freteiro' %}" class="cadastro_freteiro">torne-se um freteiro!</a>
+        </div>
+    </form> 
   </div>
 
   <script src="{% static 'js/tela_inicio.js' %}"></script>

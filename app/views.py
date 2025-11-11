@@ -1,8 +1,23 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Usuario, Freteiro
+from django.contrib.auth.hashers import check_password, make_password
+from .models import Usuario, Freteiro, solicitarFrete
 from datetime import date
 from django.contrib import messages
 from .forms import UsuarioForm, FreteiroForm
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import authenticate, login
+
+
+#   NAO ESTOU UTILIZANDO O LOGIN_REQUIRED DO DJANGO, POIS ESTOU FAZENDO MINHA PRÓPRIA AUTENTICAÇÃO.
+#   ENTÃO, PARA AS ROTAS QUE PRECISAM DE AUTENTICAÇÃO, ESTOU VERIFICANDO MANUALMENTE SE O USUÁRIO ESTÁ LOGADO.
+# COM:   usuario_id = request.session.get('usuario_id')
+#        if not usuario_id:
+#           return redirect('login_user')
+#   PARA ISSO, ESTOU ARMAZENANDO O ID DO USUÁRIO NA SESSÃO APÓS O LOGIN E VERIFICANDO ESSA INFORMAÇÃO NAS VIEWS.
+#   SE O ID NÃO ESTIVER PRESENTE NA SESSÃO, O USUÁRIO SERÁ REDIRECIONADO PARA A TELA DE LOGIN.
+#   ISSO É FEITO PARA AS ROTAS DE USUÁRIO E FRETEIRO QUE EXIGEM AUTENTICAÇÃO.
+#   PARA A UTILIZAÇÃO DO LOGIN_REQUIRED DO DJANGO, SERIA NECESSÁRIO INTEGRAR O SISTEMA DE AUTENTICAÇÃO DO DJANGO,
+#   O QUE NÃO FOI FEITO NESTE PROJETO.
 
 # Create your views here.
 def index(request):
@@ -12,7 +27,28 @@ def index(request):
 
 # Seção Usuário
 def login_user(request):
-    return render(request, 'tela_user.html', {'active': 'usuario'})    
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        senha = request.POST.get('senha')
+
+        try:
+            usuario = Usuario.objects.get(email=email)
+            if usuario.senha == senha:
+                request.session['usuario_id'] = usuario.id
+                return redirect('welcome_user')
+            else:
+                return render(request, 'tela_user.html', {
+                    'erro': 'Senha incorreta',
+                    'active': 'usuario'
+                })
+        except Usuario.DoesNotExist:
+            return render(request, 'tela_user.html', {
+                'erro': 'Usuário não encontrado',
+                'active': 'usuario'
+            })
+
+    return render(request, 'tela_user.html', {'active': 'usuario'})
+
 
 def cadastro_user(request):
     if request.method == 'POST':
@@ -48,15 +84,89 @@ def cadastro_user(request):
         
     return render(request, 'tela_cadastro_usuario.html')   
       
-
-# @login_required
+# tela inicial
 def welcome_user(request):
-    return render(request, 'tela_inicial_usuario.html') 
+    usuario_id = request.session.get('usuario_id')
+    if not usuario_id:
+        return redirect('login_user')
+
+    try:
+        usuario = Usuario.objects.get(id=usuario_id)
+    except Usuario.DoesNotExist:
+        request.session.flush()
+        return redirect('login_user')
+
+    return render(request, 'tela_inicial_usuario.html', {'usuario': usuario})
+
+
+
+# lista os fretes solicitados pelo usuario
+def fretes_solicitados(request):
+    usuario_id = request.session.get('usuario_id')
+    if not usuario_id:
+        return redirect('login_user')  # redireciona se não estiver logado
+
+    usuario = Usuario.objects.get(id=usuario_id)
+    fretes = solicitarFrete.objects.filter(usuario=usuario)
+    
+    return render(request, 'tela_fretes_solicitados.html', {
+        'fretes': fretes
+    })
+    
+def status_frete(request):
+    usuario_id = request.session.get('usuario_id')
+    if not usuario_id:
+        return redirect('login_user')
+
+    try:
+        frete = solicitarFrete.objects.filter(usuario_id=usuario_id).last()
+    except solicitarFrete.DoesNotExist:
+        frete = None
+
+    return render(request, 'tela_status_frete.html', {'frete': frete})
+
+
+# Solicitar frete
+def solicitar_frete(request, id):
+    usuario_id = request.session.get('usuario_id')
+    if not usuario_id:
+        return redirect('login_user')
+
+    if usuario_id != id:
+        return redirect('welcome_user')
+
+    usuario_logado = Usuario.objects.get(id=usuario_id)
+
+    if request.method == 'POST':
+        novo_frete = solicitarFrete()
+        novo_frete.produto = request.POST.get('produto')
+        novo_frete.peso = request.POST.get('peso')
+        novo_frete.largura = request.POST.get('largura')
+        novo_frete.altura = request.POST.get('altura')
+        novo_frete.valor = request.POST.get('valor')
+        novo_frete.endereco_coleta = request.POST.get('endereco_coleta')
+        novo_frete.endereco_entrega = request.POST.get('endereco_entrega')
+
+        dia = request.POST.get('dia')
+        mes = request.POST.get('mes')
+        ano = request.POST.get('ano')
+        novo_frete.data_entrega = f"{ano}-{mes}-{dia}"
+        novo_frete.hora = request.POST.get('hora')
+        novo_frete.usuario = usuario_logado
+        novo_frete.save()
+
+        return redirect('fretes_solicitados', id=usuario_id)
+
+
+    return render(request, 'tela_solicitar_frete.html', {'usuario': usuario_logado})
+
+
 
 # Seção freteiro
 def login_freteiro(request):
     return render(request, 'tela_motorista.html', {'active': 'motorista'})
 
+@login_required
 def welcome_freteiro(request):
     return render(request, 'tela_inicial_freteiro.html') 
 

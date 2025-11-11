@@ -20,11 +20,11 @@
     <h1 class="logo">FretesExpress</h1>
   </div>
 
-  <div class="container">
-      <div class="acao">
+  <div class="acao">
+        <a href="{% url 'solicitar_frete' id=usuario.id %}">
           <button class="btnSolicitar">solicitar frete</button>
-      </div>
-
+        </a>
+  </div>
       <!-- Botão localização
       <div class="gps">
           <img src="img/icone_gps.png" alt="GPS" class="icone-gps">

@@ -69,6 +69,8 @@ TEMPLATES = [
 
 
 STATIC_URL = '/static/'
+LOGIN_URL = 'login_user'
+
 
 WSGI_APPLICATION = 'settingsfretes.wsgi.application'
 
@@ -83,6 +85,7 @@ DATABASES = {
     }
 }
 
+# AUTH_USER_MODEL = 'app.Usuario'
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators

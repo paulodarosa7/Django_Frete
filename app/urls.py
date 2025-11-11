@@ -9,6 +9,15 @@ urlpatterns = [
     path('user/login/', views.login_user, name='login_user'),
     path('user/cadastro/', views.cadastro_user, name='cadastro_user'),
     path('user/welcome/', views.welcome_user, name='welcome_user'),
+    
+    #solicitar frete
+    path('user/fretes/historico/', views.fretes_solicitados, name='fretes_solicitados'),
+    path('user/<int:id>/fretes/solicitar/', views.solicitar_frete, name='solicitar_frete'),
+    path('user/fretes/status/', views.status_frete, name='status_frete'),
+
+    # path('user/<int:id>/frete/<int:id>/editar', views.solicitar_frete, name='solicitar_frete'),
+
+    
 
     
     # rotas freteiro
