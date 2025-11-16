@@ -17,13 +17,17 @@
       <a href="{% url 'login_freteiro' %}" class="{% if active == 'motorista' %}active{% endif %}" id="btnMotorista">motorista</a>
   </div>
 
-    <div id="motoristaTela" class="loginTela">
-      <p class="title">painel de bordo</p>
-      <input type="email" placeholder="e-mail">
-      <input type="password" placeholder="senha">
-      <button class="btnInicio">dar partida</button>
-      <a href="{% url 'cadastro_freteiro' %}" class="cadastro_freteiro">torne-se um freteiro!</a>
-    </div>
+
+    <form action="{% url 'login_freteiro' %}" method="POST">
+            {% csrf_token %}
+      <div id="motoristaTela" class="loginTela">
+        <p class="title">painel de bordo</p>
+        <input name="email" type="email" placeholder="e-mail">
+        <input name="senha" type="password" placeholder="senha">
+        <button class="btnInicio">dar partida</button>
+        <a href="{% url 'cadastro_freteiro' %}" class="cadastro_freteiro">torne-se um freteiro!</a>
+      </div>
+    </form>
   </div>
 
   <script src="{% static 'js/tela_inicio.js' %}"></script>

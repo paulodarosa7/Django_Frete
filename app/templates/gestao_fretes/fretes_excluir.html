@@ -1,0 +1,23 @@
+{% load static %}
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Excluir Frete</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 30px; }
+        button { padding: 8px 15px; margin-right: 10px; cursor: pointer; }
+        .danger { background-color: #e74c3c; color: white; border: none; }
+        .cancel { background-color: #95a5a6; color: white; border: none; text-decoration: none; padding: 8px 15px; }
+    </style>
+</head>
+<body>
+    <h1>Excluir frete: {{ frete.produto }}</h1>
+    <p>Tem certeza que deseja excluir <b>{{ frete.produto }}</b>?</p>
+
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="danger">Sim, excluir</button>
+        <a href="{% url 'listar_fretes' %}" class="cancel">Cancelar</a>
+    </form>
+</body>
+</html>

@@ -35,6 +35,9 @@ class solicitarFrete(models.Model):
     hora_solicitacao = models.TimeField(auto_now_add=True)
     usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
     
+    status = models.CharField(max_length=20, default="pendente") # determina o status atual do frete
+    freteiro = models.ForeignKey("Freteiro", null=True, blank=True, on_delete=models.SET_NULL) # chave estrangeira de freteiro, para o mesmo poder aceitar um frete
+                                                                                               #  de um requerente. Se está nulo é porque ninguem aceirou a corrida     
 
 
     def __str__(self):

@@ -3,7 +3,7 @@ from django.contrib.auth.hashers import check_password, make_password
 from .models import Usuario, Freteiro, solicitarFrete
 from datetime import date
 from django.contrib import messages
-from .forms import UsuarioForm, FreteiroForm
+from .forms import UsuarioForm, FreteiroForm, FreteForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login
 
@@ -47,7 +47,9 @@ def login_user(request):
                 'active': 'usuario'
             })
 
-    return render(request, 'tela_user.html', {'active': 'usuario'})
+    return render(request, 'tela_user.html', {
+        'active': 'usuario'
+        })
 
 
 def cadastro_user(request):
@@ -98,6 +100,27 @@ def welcome_user(request):
 
     return render(request, 'tela_inicial_usuario.html', {'usuario': usuario})
 
+def perfil_user(request):
+    usuario_id = request.session.get('usuario_id')
+    if not usuario_id:
+        return redirect('login_user')
+
+    usuario = get_object_or_404(Usuario, id=usuario_id)
+
+    if request.method == "POST":
+        usuario.nome = request.POST.get("nome")
+        usuario.email = request.POST.get("email")
+        usuario.tel = request.POST.get("tel")
+        usuario.cidade = request.POST.get("cidade")
+        usuario.estado = request.POST.get("estado")
+        usuario.data_nascimento = request.POST.get("data_nascimento")
+        usuario.save()
+
+        messages.success(request, "Perfil atualizado com sucesso!")
+        return redirect('perfil_user')
+
+    return render(request, 'perfil/perfil_user.html', {'usuario': usuario})
+
 # Solicitar frete
 def solicitar_frete(request, id):
     usuario_id = request.session.get('usuario_id')
@@ -124,6 +147,7 @@ def solicitar_frete(request, id):
         ano = request.POST.get('ano')
         novo_frete.data_entrega = f"{ano}-{mes}-{dia}"
         novo_frete.hora = request.POST.get('hora')
+        novo_frete.status = "pendente"
         novo_frete.usuario = usuario_logado
         novo_frete.save()
 
@@ -146,6 +170,7 @@ def frete_concluido(request, id):
         'fretes': fretes
     })
 
+
 #tela de notificações de frete e seus status de forma prévia (fretes já solicitados)
  ########## EM DESENVOLVIMENTO....
 # lista os fretes solicitados pelo usuario
@@ -154,32 +179,108 @@ def frete_concluido(request, id):
 #     if not usuario_id:
 #         return redirect('login_user')  # redireciona se não estiver logado
 
-    
-
-
 # verifica o status do frete escolhido
 # o usuario vê o status do seu frete
 def status_frete(request):
     usuario_id = request.session.get('usuario_id')
-    if not usuario_id:
+    freteiro_id = request.session.get('freteiro_id')
+
+    if not usuario_id and not freteiro_id:
         return redirect('login_user')
+    
+    # para usuario
+    if usuario_id:
+        frete = solicitarFrete.objects.filter(usuario_id=usuario_id).last()
+        return render(request, 'status_frete_usuario.html', {
+            'frete': frete
+        })
+
+    # para freteiro
+    if freteiro_id:
+        frete = solicitarFrete.objects.filter(freteiro_id=freteiro_id).last()
+        return render(request, 'status_frete_freteiro.html', {
+            'frete': frete
+        })
+        
+
+# interação entre usuarios e freteiros
+# sessão de escolha de fretes
+def fretes_disponiveis(request):
+    
+    freteiro_id = request.session.get('freteiro_id') # verifica se o freteiro está logado
+    if not freteiro_id:
+        return redirect('login_freteiro')
+    
+    fretes = solicitarFrete.objects.filter(status="pendente")
+    
+    return render(request, 'tela_fretes_disponiveis.html', {
+        'fretes': fretes
+        })
+
+
+
+# Sessão freteiro
+def login_freteiro(request):
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        senha = request.POST.get('senha')
+
+        try:
+            freteiro = Freteiro.objects.get(email=email)
+            if freteiro.senha == senha:
+                request.session['freteiro_id'] = freteiro.id
+                return redirect('welcome_freteiro')
+            else:
+                return render(request, 'tela_motorista.html', {
+                    'erro': 'Senha incorreta',
+                    'active': 'freteiro'
+                })
+        except Freteiro.DoesNotExist:
+            return render(request, 'tela_user.html', {
+                'erro': 'Freteiro não encontrado',
+                'active': 'freteiro'
+            })
+    return render(request, 'tela_motorista.html', {
+        'active': 'freteiro'
+        })
+
+def welcome_freteiro(request):
+    freteiro_id = request.session.get('freteiro_id')
+    if not freteiro_id:
+        return redirect('login_freteiro')
 
     try:
-        frete = solicitarFrete.objects.filter(usuario_id=usuario_id).last()
-    except solicitarFrete.DoesNotExist:
-        frete = None
+        freteiro = Freteiro.objects.get(id=freteiro_id)
+    except Freteiro.DoesNotExist:
+        request.session.flush()
+        return redirect('login_freteiro')
 
-    return render(request, 'tela_status_frete.html', {'frete': frete})
+    return render(request, 'tela_inicial_freteiro.html', {
+        'freteiro': freteiro
+        })
 
 
+def perfil_freteiro(request):
+    freteiro_id = request.session.get('freteiro_id')
+    if not freteiro_id:
+        return redirect('login_freteiro')
 
-# Seção freteiro
-def login_freteiro(request):
-    return render(request, 'tela_motorista.html', {'active': 'motorista'})
+    freteiro = get_object_or_404(Freteiro, id=freteiro_id)
 
-@login_required
-def welcome_freteiro(request):
-    return render(request, 'tela_inicial_freteiro.html') 
+    if request.method == "POST":
+        freteiro.nome = request.POST.get("nome")
+        freteiro.email = request.POST.get("email")
+        freteiro.tel = request.POST.get("tel")
+        freteiro.veiculo = request.POST.get("veiculo")
+        freteiro.cidade = request.POST.get("cidade")
+        freteiro.estado = request.POST.get("estado")
+        freteiro.data_nascimento = request.POST.get("data_nascimento")
+        freteiro.save()
+
+        messages.success(request, "Perfil atualizado com sucesso!")
+        return redirect('perfil_freteiro')
+
+    return render(request, 'perfil/perfil_freteiro.html', {'freteiro': freteiro})
 
 
 
@@ -225,6 +326,94 @@ def cadastro_freteiro(request):
 
     return render(request, 'tela_cadastro_freteiro.html')  
 
+# fretes e freteiros
+def aceitar_frete(request, frete_id):
+    freteiro_id = request.session.get('freteiro_id')
+    if not freteiro_id:
+        return redirect('login_freteiro')
+
+    frete = get_object_or_404(solicitarFrete, id=frete_id)
+
+    # Verifica antes de modificar
+    if frete.status != "pendente":
+        messages.error(request, "Este frete já foi aceito por outro freteiro.")
+        return redirect('fretes_disponiveis')
+
+    # Agora sim modifica
+    frete.status = "aceito"
+    frete.freteiro_id = freteiro_id
+    frete.save()
+
+    messages.success(request, "Frete aceito com sucesso!")
+    return redirect('status_frete')
+
+
+
+# gestão de fretes
+def listar_fretes(request):
+    usuario_id = request.session.get('usuario_id')
+    freteiro_id = request.session.get('freteiro_id')
+
+    # ADMIN / SUPORTE
+    if not usuario_id and not freteiro_id:
+        fretes = solicitarFrete.objects.all()
+        return render(request, 'gestao_fretes/fretes_listar.html', {'fretes': fretes})
+
+    # USUÁRIO
+    if usuario_id:
+        fretes = solicitarFrete.objects.filter(usuario_id=usuario_id)
+        return render(request, 'gestao_fretes/fretes_listar.html', {'fretes': fretes})
+
+    # FRETEIRO
+    if freteiro_id:
+        fretes = solicitarFrete.objects.filter(freteiro_id=freteiro_id)
+        return render(request, 'gestao_fretes/fretes_listar.html', {'fretes': fretes})
+    
+    
+def atualizar_frete(request, id):
+    frete = get_object_or_404(solicitarFrete, id=id)
+
+    if request.method == "POST":
+        form = FreteForm(request.POST, instance=frete)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Frete atualizado com sucesso!")
+            return redirect('listar_fretes')
+    else:
+        form = FreteForm(instance=frete)
+
+    return render(request, 'gestao_fretes/fretes_editar.html', {'form': form, 'frete': frete})
+
+
+def cancelar_frete(request, id):
+    frete = get_object_or_404(solicitarFrete, id=id)
+
+    if frete.status in ["concluido", "cancelado"]:
+        messages.error(request, "Este frete já foi encerrado!")
+        return redirect('listar_fretes')
+
+    frete.status = "cancelado"
+    frete.save()
+
+    messages.success(request, "Frete cancelado com sucesso!")
+    return redirect('listar_fretes')
+
+def excluir_frete(request, id):
+    frete = get_object_or_404(solicitarFrete, id=id)
+
+    if frete.status in ["concluido", "cancelado"]:
+        messages.error(request, "Fretes concluídos/cancelados não podem ser excluídos.")
+        return redirect('listar_fretes')
+
+    if request.method == "POST":
+        frete.delete()
+        messages.success(request, "Frete excluído com sucesso!")
+        return redirect('listar_fretes')
+
+    return render(request, 'gestao_fretes/fretes_excluir.html', {
+        'frete': frete,
+    })
+
 
 # Administração geral
 def listar_usuarios_geral(request):
@@ -247,7 +436,7 @@ def listar_usuarios_geral(request):
         freteiros = Freteiro.objects.all()
         usuarios = Usuario.objects.all()
         
-    return render(request, 'administrar_usuarios.html', {
+    return render(request, 'gestao_usuarios/administrar_usuarios.html', {
         'freteiros': freteiros,
         'usuarios': usuarios,
         'query': query
@@ -271,7 +460,7 @@ def update_geral(request, id, tipo):
         form.save()
         return redirect('listar_usuarios_geral')
 
-    return render(request, 'update.html', {
+    return render(request, 'gestao_usuarios/update.html', {
         'form': form,
         'tipo': tipo,
         'post': post
@@ -290,13 +479,11 @@ def excluir_geral(request, id, tipo):
         post.delete()
         return redirect('listar_usuarios_geral')
 
-    return render(request, 'delete.html', {
+    return render(request, 'gestao_usuarios/delete.html', {
         'post': post,
         'tipo': tipo
     })
     
-def listar_por_cidade(request, cidade):
-    freteiros = Freteiro.objects.filter(cidade__iexact=cidade)
-    return render(request, 'listar_por_cidade.html', {'freteiros': freteiros, 'cidade': cidade})
+
   
 
