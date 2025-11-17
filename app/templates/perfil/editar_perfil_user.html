@@ -20,13 +20,13 @@
     <form method="POST" class="form-edit">
         {% csrf_token %}
 
-        <label class="label">Nome</label>
+        <label class="label">Nome:</label>
         <input type="text" class="input" name="nome" value="{{ usuario.nome }}" required>
 
-        <label class="label">Email</label>
+        <label class="label">Email:</label>
         <input type="email" class="input" name="email" value="{{ usuario.email }}" required>
 
-        <label class="label">Telefone</label>
+        <label class="label">Telefone:</label>
         <input type="text" class="input" name="tel" value="{{ usuario.tel }}" required>
 
 

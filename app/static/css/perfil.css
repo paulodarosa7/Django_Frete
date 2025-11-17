@@ -25,13 +25,16 @@ body, html {
     text-transform: lowercase;
 }
 
+
+
 /* ======== FOTO ======== */
 .avatar img {
-    width: 95px;
-    height: 95px;
+    width: 110px;
+    height: 110px;
     border-radius: 50%;
     object-fit: cover;
     border: 3px solid #f0b400;
+    margin-bottom: 20px;
 }
 
 /* ======== FORMULÁRIO ======== */
@@ -45,10 +48,9 @@ body, html {
 /* ======== LABELS ======== */
 .label {
     color: #f0b400;
-    text-align: left;
     font-family: monospace;
-    font-size: 0.9rem;
-    margin-bottom: -8px;
+    font-size: 1.2rem;
+    text-align: left;
 }
 
 /* ======== INPUTS ======== */
@@ -80,97 +82,53 @@ body, html {
 }
 
 /* ======== LINK VOLTAR ======== */
-.voltar {
-    display: inline-block;
+.voltar, .btn-link {
+    display: block;
     margin-top: 20px;
     color: #f0b400;
+    font-family: monospace;
     text-decoration: none;
     font-size: 1rem;
-    font-family: monospace;
+    font-weight: bold;
 }
 
-.voltar:hover {
+.voltar:hover, .btn-link:hover {
     text-decoration: underline;
 }
-
 
 /* ======== BLOCO DE INFORMAÇÕES DO PERFIL ======== */
 .info-bloco {
-    margin-top: 25px;
     display: flex;
     flex-direction: column;
-    gap: 20px;
-    width: 100%;
-}
-
-/* Linha com label + valor */
-.linha {
-    display: flex;
-    flex-direction: column;
-    text-align: center;
-}
-
-/* Corrige cor e fonte dos labels */
-.linha .label {
-    color: #f0b400;
-    font-size: 1rem;
-    font-family: monospace;
-}
-
-/* Estilo dos valores */
-.linha .valor {
-    color: #fff;
-    font-size: 1.1rem;
-    font-family: 'Kaushan Script', cursive, sans-serif;
-    margin-top: 3px;
-}
-
-/* Links do fundo */
-.btn-link {
-    display: block;
-    margin-top: 25px;
-    color: #f0b400;
-    font-family: monospace;
-    font-size: 1.1rem;
-    text-decoration: none;
-    font-weight: bold;
-    text-align: center;
-}
-
-.btn-link:hover {
-    text-decoration: underline;
-}
-
-/* ======================== ESTILO MELHORADO PARA VISUALIZAÇÃO ======================== */
-.visualizacao .info-bloco {
-    display: flex;
-    flex-direction: column;
-    gap: 25px;
-    width: 100%;
+    gap: 18px;
     margin-top: 30px;
 }
 
-/* Cada linha vira duas colunas alinhadas */
-.visualizacao .linha {
+/* Cada linha com 2 colunas perfeitamente alinhadas */
+.linha {
     display: flex;
-    justify-content: center;
-    gap: 60px; /* distancia entre as colunas */
-    text-align: center;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 6px 0;
 }
 
-/* Coluna esquerda (Labels) */
-.visualizacao .linha .label {
-    width: 120px;
-    text-align: right;
+/* Coluna esquerda (Label) */
+.linha .label {
+    width: 50%;
+    text-align: left;
     color: #f0b400;
     font-family: monospace;
+    font-size: 20px;
 }
 
-/* Coluna direita (Valores) */
-.visualizacao .linha .valor {
-    width: 160px;
+/* Coluna direita (Valor) */
+.linha .valor {
+    width: 100%;
     text-align: left;
-    color: white;
-    font-size: 1.2rem;
-    font-family: 'Kaushan Script', cursive, sans-serif;
+    color: #ffffff;
+    font-size: 20px;                
+    font-family: monospace;         
+    letter-spacing: 0.5px;
 }
+

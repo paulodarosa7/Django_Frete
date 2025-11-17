@@ -128,7 +128,7 @@ def editar_perfil_user(request, id):
         usuario.save()
 
         messages.success(request, "Perfil atualizado com sucesso!")
-        return redirect('perfil_user')
+        return redirect('perfil_user', id=usuario_id)
 
     return render(request, 'perfil/editar_perfil_user.html', {'usuario': usuario})
 
