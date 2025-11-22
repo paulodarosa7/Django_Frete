@@ -5,6 +5,19 @@
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/status_frete.css' %}">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css"/>
+
+<style>
+    /* Mapa com tamanho fixo para não ficar preto */
+    #map {
+        width: 90%;
+        height: 380px;
+        border-radius: 15px;
+        margin: 0 auto;
+        margin-top: 10px;
+    }
+</style>
 {% endblock %}
 
 {% block content %}
@@ -16,10 +29,16 @@
     </header>
 
     <!-- Mapa -->
-    <div class="mapa">
-        <img src="{% static 'img/mapa_exemplo.png' %}" alt="Mapa do trajeto" class="mapa-img">
-        <div class="trajeto"></div>
-    </div>
+    <div id="map"></div>
+
+    <!-- Endereços enviados para o script -->
+    <script id="endereco-coleta" type="application/json">
+        "{{ frete.endereco_coleta }}"
+    </script>
+
+    <script id="endereco-entrega" type="application/json">
+        "{{ frete.endereco_entrega }}"
+    </script>
 
     <!-- Informações principais -->
     <div class="info">
@@ -41,7 +60,7 @@
             <p class="sub">O entregador está levando o pedido até o destino.</p>
         {% elif frete.status == "concluido" %}
             <p>✅ Frete concluído!</p>
-            <p class="sub">Obrigado por usar o FretesExpress!!!!!!</p>
+            <p class="sub">Obrigado por usar o FretesExpress!</p>
         {% else %}
             <p>ℹ Status desconhecido</p>
         {% endif %}
@@ -51,5 +70,10 @@
 {% endblock %}
 
 {% block extra_js %}
-<!-- JS específico desta página, se houver -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
+
+<script src="https://api.mapbox.com/mapbox-gl-js/v2.17.0/mapbox-gl.js"></script>
+
+<script src="{% static 'js/status_frete.js' %}"></script>
 {% endblock %}

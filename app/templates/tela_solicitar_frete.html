@@ -4,7 +4,10 @@
 {% block title %}Solicitar Frete — FretesExpress{% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/tela_cadastro.css' %}">
+<link rel="stylesheet" href="{% static 'css/solicitar_frete.css' %}">
+<link href='https://api.mapbox.com/mapbox-gl-js/v2.17.0/mapbox-gl.css' rel='stylesheet' />
+<link href='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.2/mapbox-gl-geocoder.css' rel='stylesheet' />
+
 {% endblock %}
 
 {% block content %}
@@ -25,9 +28,29 @@
         </div>
 
         <input name="valor" type="text" placeholder="valor do item">
-        <input name="endereco_coleta" type="text" placeholder="endereço de origem">
-        <input name="endereco_entrega" type="text" placeholder="endereço de destino">
+<div style="position: relative; width: 100%; margin-bottom: 10px;">
+  <input
+    type="text"
+    id="endereco_coleta"
+    name="endereco_coleta"
+    placeholder="Digite o endereço de origem"
+    autocomplete="off"
+    style="width: 100%; padding: 12px; border-radius: 8px; border: none;"
+  />
+  <div id="autocomplete-list-coleta" style="position: absolute; background: white; width: 100%; max-height: 200px; overflow-y: auto; border: 1px solid #ccc; z-index: 999;"></div>
+</div>
 
+<div style="position: relative; width: 100%; margin-bottom: 10px;">
+  <input
+    type="text"
+    id="endereco_entrega"
+    name="endereco_entrega"
+    placeholder="Digite o endereço de destino"
+    autocomplete="off"
+    style="width: 100%; padding: 12px; border-radius: 8px; border: none;"
+  />
+  <div id="autocomplete-list-entrega" style="position: absolute; background: white; width: 100%; max-height: 200px; overflow-y: auto; border: 1px solid #ccc; z-index: 999;"></div>
+</div>
         <p class="title">Data e hora da entrega</p>
         <div class="aniversario">
             <input name='dia' type="text" placeholder="dia">
@@ -42,5 +65,7 @@
 {% endblock %}
 
 {% block extra_js %}
-<!-- JS específico desta página, se houver -->
+<script src='https://api.mapbox.com/mapbox-gl-js/v2.17.0/mapbox-gl.js'></script>
+<script src='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.2/mapbox-gl-geocoder.min.js'></script>
+<script src="{% static 'js/solicitar_frete.js' %}"></script>
 {% endblock %}

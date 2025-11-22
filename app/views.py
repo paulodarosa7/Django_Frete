@@ -178,12 +178,12 @@ def frete_concluido(request, id):
         return redirect('login_user')  # redireciona se não estiver logado
 
     usuario = Usuario.objects.get(id=usuario_id)
-    fretes = solicitarFrete.objects.filter(usuario=usuario)
+    frete = solicitarFrete.objects.filter(usuario=usuario).last()
     
     return render(request, 'tela_frete_concluido.html', {
-        'fretes': fretes
+        'frete': frete
     })
-    
+
 def fretes_solicitados(request, id):
     # confirma se o usuário está logado
     usuario_id = request.session.get('usuario_id')
@@ -241,6 +241,7 @@ def status_frete(request, frete_id):
             'freteiro': freteiro
 
         })
+
         
 
 # interação entre usuarios e freteiros
@@ -391,7 +392,8 @@ def aceitar_frete(request, frete_id):
     frete.save()
 
     messages.success(request, "Frete aceito com sucesso!")
-    return redirect('status_frete')
+    return redirect('status_frete', frete_id=frete.id)
+
 
 # ver fretes em andamento
 def fretes_aceitos(request, id):
