@@ -45,7 +45,7 @@ async function iniciarMapa() {
     }
 
     // 2) Inicializa o mapa centralizado entre os dois pontos
-    const map = L.map("map").setView([origem.lat, origem.lng], 13);
+    const map = L.map("map", { zoomControl: false }).setView([origem.lat, origem.lng], 13);
 
     // 3) Camada do mapa
       L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
@@ -53,6 +53,13 @@ async function iniciarMapa() {
         subdomains: "abcd",
         maxZoom: 20
     }).addTo(map);
+
+                // colocar o icone de localização padrao do app
+                    const userIcon = L.divIcon({
+                    className: "icone-localizacao",
+                    iconSize: [32, 32],
+                    iconAnchor: [16, 16]
+                    });
 
 
     // 4) Renderiza a rota com OSRM
@@ -70,7 +77,7 @@ async function iniciarMapa() {
             ]
         },
         createMarker: function (i, waypoint) {
-            return L.marker(waypoint.latLng).bindPopup(
+            return L.marker(waypoint.latLng, { icon: userIcon }).bindPopup(
                 i === 0 ? "📍 Origem" : "🏁 Destino"
             );
         },

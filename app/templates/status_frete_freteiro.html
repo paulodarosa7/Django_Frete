@@ -5,6 +5,8 @@
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/status_frete.css' %}">
+<link href="https://fonts.googleapis.com/css2?family=Kaushan+Script&display=swap" rel="stylesheet">
+
 {% endblock %}
 
 {% block content %}
@@ -27,6 +29,8 @@
         <p>📦 Produto — {{ frete.produto }}</p>
         <p>🟡 Coletar em — {{ frete.endereco_coleta }}</p>
         <p>⚫ Entregar em — {{ frete.endereco_entrega }}</p>
+        <p>📅 Data: {{ frete.data_solicitacao }}</p>
+        <p>🕰️ Horário: {{ frete.hora_solicitacao }}</p>
         <span class="preco">R$ {{ frete.valor }}</span>
     </div>
 

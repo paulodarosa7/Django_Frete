@@ -48,3 +48,17 @@ document.addEventListener('DOMContentLoaded', () => {
   autocomplete('endereco_coleta', 'autocomplete-list-coleta');
   autocomplete('endereco_entrega', 'autocomplete-list-entrega');
 });
+
+// verifica hora
+document.getElementById("hora").addEventListener("input", function () {
+    const valor = this.value;
+
+    const regexHora = /^([01]\d|2[0-3]):([0-5]\d)$/;
+
+    if (valor.length === 5) {
+        if (!regexHora.test(valor)) {
+            alert("Digite um horário válido no formato HH:MM (00 a 23 horas e 00 a 59 minutos)");
+            this.value = "";
+        }
+    }
+});

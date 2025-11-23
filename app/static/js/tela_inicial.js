@@ -1,6 +1,8 @@
 document.addEventListener("DOMContentLoaded", () => {
 
-    const map = L.map('map').setView([-24.9555, -53.4552], 5);
+    const map = L.map('map', { zoomControl: false }).setView([-24.9555, -53.4552], 5);
+    L.control.zoom({ position: 'topright' }).addTo(map);
+
 
     L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
         attribution: "&copy; OpenStreetMap contributors &copy; CARTO",

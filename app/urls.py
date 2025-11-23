@@ -23,6 +23,10 @@ urlpatterns = [
     path('user/<int:id>/fretes/solicitar/', views.solicitar_frete, name='solicitar_frete'),
     path('user/<int:id>/frete/concluido/', views.frete_concluido, name='frete_concluido'),
     path('frete/<int:frete_id>/status/', views.status_frete, name='status_frete'),
+    path('frete/<int:frete_id>/editar/', views.editar_frete, name='editar_frete'),
+    path('frete/<int:frete_id>/cancelar/', views.cancelar_frete, name='cancelar_frete'),
+    
+
 
     # path('user/<int:id>/frete/<int:id>/editar', views.solicitar_frete, name='solicitar_frete'),
 
@@ -47,10 +51,10 @@ urlpatterns = [
 
     
     # gestão de fretes
-    path('fretes/', views.listar_fretes, name='listar_fretes'),
-    path('fretes/<int:id>/atualizar/', views.atualizar_frete, name='atualizar_frete'),
-    path('fretes/<int:id>/cancelar/', views.cancelar_frete, name='cancelar_frete'),
-    path('fretes/<int:id>/excluir/', views.excluir_frete, name='excluir_frete'),
+    # path('fretes/', views.listar_fretes, name='listar_fretes'),
+    # path('fretes/<int:id>/atualizar/', views.atualizar_frete, name='atualizar_frete'),
+    # path('fretes/<int:id>/cancelar/', views.cancelar_frete, name='cancelar_frete'),
+    # path('fretes/<int:id>/excluir/', views.excluir_frete, name='excluir_frete'),
 
     
     # admininstração

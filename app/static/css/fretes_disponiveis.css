@@ -12,6 +12,14 @@ body {
     position: relative;
 }
 
+
+.card-frete {
+  color: white;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+
 .icone-sino {
     position: absolute;
     left: 15px;

@@ -7,6 +7,8 @@
 
 {% block extra_css %}
     <link rel="stylesheet" href="{% static 'css/status_frete.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Kaushan+Script&display=swap" rel="stylesheet">
+
 {% endblock %}
 
 {% block content %}
@@ -34,12 +36,32 @@
 
         </div>
 
-        <div class="frete-status status-{{ frete.status|lower }}">
-            {{ frete.status|title }}
+        <div class="frete-status status-{{ frete.status }}">
+            {{ frete.status }}
         </div>
 
         {% if frete.status == "pendente" or frete.status == "aceito" %}
             <a href="{% url 'status_frete' frete.id %}" class="btnAcompanhar">Acompanhar</a>
+
+            <div class="linha-botoes">
+                <!-- Cancelar -->
+                <button class="btnCancelar" onclick="abrirModalCancelar({{ frete.id }})">Cancelar</button>
+
+                <!-- Editar -->
+                <a href="{% url 'editar_frete' frete.id %}" class="btnEditar">Editar</a>
+            </div>
+
+            <!-- Modal continua separado e igual -->
+            <div id="modalCancelar-{{ frete.id }}" class="modal">
+                <div class="modal-content">
+                    <h3>Tem certeza que deseja cancelar o frete?</h3>
+                    <p>Esta ação não poderá ser desfeita.</p>
+                    <div class="modal-buttons">
+                        <button class="btnNao" onclick="fecharModalCancelar({{ frete.id }})">Não</button>
+                        <a href="{% url 'cancelar_frete' frete.id %}" class="btnSim">Sim, cancelar</a>
+                    </div>
+                </div>
+            </div>
         {% endif %}
 
     </div>
@@ -47,5 +69,14 @@
         <p>Você ainda não solicitou nenhum frete.</p>
     {% endfor %}
 </div>
+<script>
+    function abrirModalCancelar(id) {
+        document.getElementById("modalCancelar-" + id).style.display = "flex";
+    }
+
+    function fecharModalCancelar(id) {
+        document.getElementById("modalCancelar-" + id).style.display = "none";
+    }
+</script>
 
 {% endblock %}

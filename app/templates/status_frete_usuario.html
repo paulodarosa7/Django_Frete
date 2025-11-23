@@ -5,6 +5,7 @@
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/status_frete.css' %}">
+<link href="https://fonts.googleapis.com/css2?family=Kaushan+Script&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css"/>
 
@@ -42,9 +43,12 @@
 
     <!-- Informações principais -->
     <div class="info">
-        <p>📦 Produto — {{ frete.produto }}</p>
-        <p>🟡 Endereço Origem — {{ frete.endereco_coleta }}</p>
-        <p>⚫ Endereço Destino — {{ frete.endereco_entrega }}</p>
+        <p>📦 Produto: {{ frete.produto }}</p>
+        <p>🟡 Endereço Origem: {{ frete.endereco_coleta }}</p>
+        <p>⚫ Endereço Destino: {{ frete.endereco_entrega }}</p>
+        <p>📅 Data: {{ frete.data_solicitacao }}</p>
+        <p>🕰️ Horário: {{ frete.hora_solicitacao }}</p>
+
         <span class="preco">R$ {{ frete.valor }}</span>
     </div>
 
@@ -61,6 +65,9 @@
         {% elif frete.status == "concluido" %}
             <p>✅ Frete concluído!</p>
             <p class="sub">Obrigado por usar o FretesExpress!</p>
+        {% elif frete.status == "cancelado" %}
+            <p>❌ O frete foi cancelado!</p>
+            <p class="sub">Sua solicitação foi cancelada.</p>
         {% else %}
             <p>ℹ Status desconhecido</p>
         {% endif %}

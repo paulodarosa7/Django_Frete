@@ -95,6 +95,7 @@ button {
   border: none;
   cursor: pointer;
   margin-top: 15px;
+  width: 100%;
   transition: background 0.3s;
 }
 
@@ -118,4 +119,89 @@ button:hover {
 }
 #autocomplete-list-coleta div:hover, #autocomplete-list-entrega div:hover {
   background: #f0f0f0;
+}
+
+.input-prefixo,.input-sufixo {
+  position: relative;
+  display: flex;
+  align-items: center; /* centraliza verticalmente */
+  width: 100%;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #fff;
+  overflow: hidden;
+}
+
+
+.input-prefixo span,
+.input-sufixo span {
+  padding: 0 12px;
+  font-weight: bold;
+  color: #555;
+  white-space: nowrap;
+}
+
+.input-prefixo input {
+  flex: 1;
+  border: none;
+  outline: none;
+  padding: 12px;
+  font-size: 16px;
+}
+
+.input-sufixo input {
+  flex: 1;
+  border: none;
+  outline: none;
+  padding: 12px;
+  font-size: 16px;
+  text-align: left;
+}
+
+.linha-botoes {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+/* botão 100% idêntico, ignorando tamanho do texto */
+.linha-botoes {
+    display: flex;
+    justify-content: center; /* Centraliza os botões na horizontal */
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+}
+
+.btnCancelar, .btnEditar {
+    flex: 1;               /* Garantir mesmo tamanho */
+    padding: 12px 0; 
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 16px;
+    font-family: Arial, sans-serif !important;
+    border: none;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+/* BOTÃO CANCELAR */
+.btnCancelar {
+    background: #d9534f;
+    color: white;
+}
+
+.btnCancelar:hover {
+    background: #c34743;
+}
+
+/* BOTÃO SALVAR */
+.btnEditar {
+    background: #f0b400;
+    color: #2d2d2d;
+}
+
+.btnEditar:hover {
+     background-color: #e6b000;;
 }
