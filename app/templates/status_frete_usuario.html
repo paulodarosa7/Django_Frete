@@ -48,6 +48,11 @@
         <p>⚫ Endereço Destino: {{ frete.endereco_entrega }}</p>
         <p>📅 Data: {{ frete.data_solicitacao }}</p>
         <p>🕰️ Horário: {{ frete.hora_solicitacao }}</p>
+    <div id="resumo-rota" style="margin-top: 10px;">
+        <p id="distancia">Distância: --</p>
+        <p id="tempo">Tempo: --</p>
+        <p id="custo" style="font-weight: bold; font-size: 1.2em;">Custo: --</p>
+    </div>
 
         <span class="preco">R$ {{ frete.valor }}</span>
     </div>

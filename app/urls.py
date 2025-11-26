@@ -48,6 +48,9 @@ urlpatterns = [
     path('motorista/frete/<int:frete_id>/aceitar/', views.aceitar_frete, name='aceitar_frete'),
     path('motorista/fretes/status/<int:frete_id>', views.status_frete, name='status_frete_freteiro'),
     path('motorista/<int:id>/meus/fretes/', views.fretes_aceitos, name='fretes_aceitos'),
+    path('motorista/<int:id>/recusar/frete/<int:frete_id>/', views.recusar_frete, name='recusar_frete'),
+
+
 
     
     # gestão de fretes
@@ -67,6 +70,8 @@ urlpatterns = [
     #SAIR
     path('logout/', views.logout, name='logout'),
 
+    #CALCULO DA ROTA
+    path('frete/<int:frete_id>/calcular/rota/', views.calcular_rota, name='calcular_rota'),
 
 
 

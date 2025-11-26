@@ -18,6 +18,12 @@
 <div class="container">
     <h2>Fretes Disponíveis</h2>
 
+    {% if erro %}
+        <div class="alert alert-error">{{ erro }}</div>
+        <a href="{% url 'fretes_disponiveis' %}" class="btnAceitar">voltar para fretes disponíveis</a>
+    {% endif %}
+
+
     {% if fretes %}
         {% for frete in fretes %}
             <div class="card-frete">

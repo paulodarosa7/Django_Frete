@@ -43,3 +43,14 @@ class solicitarFrete(models.Model):
 
     def __str__(self):
         return self.produto
+
+class Rota(models.Model):
+    origem = models.CharField(max_length=255)
+    destino = models.CharField(max_length=255)
+    distancia = models.FloatField()
+    custo = models.FloatField()
+    tempo_minutos = models.IntegerField()
+    criado_em = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.origem} - {self.destino} - R${self.custo}"

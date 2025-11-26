@@ -63,7 +63,7 @@ async function iniciarMapa() {
 
 
     // 4) Renderiza a rota com OSRM
-    L.Routing.control({
+    var rota = L.Routing.control({
         waypoints: [
             L.latLng(origem.lat, origem.lng),
             L.latLng(destino.lat, destino.lng)
@@ -85,7 +85,42 @@ async function iniciarMapa() {
         draggableWaypoints: false
     }).addTo(map);
 
-}
+    
+rota.on('routesfound', function(e) {
+    var summary = e.routes[0].summary;
+    const distanciaKm = summary.totalDistance / 1000;
+    const tempoMin = Math.round(summary.totalTime % 3600 / 60);
+    const custo = distanciaKm * 2;
+
+    // Atualiza na página
+    document.getElementById('distancia').textContent = `Distância: ${distanciaKm.toFixed(2)} km`;
+    document.getElementById('tempo').textContent = `Tempo: ${tempoMin} minutos`;
+    document.getElementById('custo').textContent = `Custo: R$ ${custo.toFixed(2)}`;
+
+    // Envia para o Django
+    fetch(`/frete/${freteId}/salvar-rota/`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken') 
+        },
+        body: JSON.stringify({
+            origem: '{{ frete.endereco_coleta }}',
+            destino: '{{ frete.endereco_entrega }}',
+            distancia: distanciaKm.toFixed(2),
+            custo: custo.toFixed(2),
+            tempoMinutos: tempoMin
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if(data.success){
+            console.log('Rota salva no banco!');
+        } else {
+            console.error('Erro ao salvar rota:', data.error);
+        }
+    });
+});
 
 // Executa ao abrir a página
 iniciarMapa();

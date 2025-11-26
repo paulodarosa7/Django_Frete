@@ -5,6 +5,22 @@ body {
     font-family: Arial, sans-serif;
 }
 
+.alert {
+    padding: 12px;
+    border-radius: 5px;
+    margin-bottom: 15px;
+}
+
+.alert-success {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.alert-error {
+    background-color: #f44336;
+    color: white;
+}
+
 .topbar {
     width: 100%;
     padding: 15px 0;

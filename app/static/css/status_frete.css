@@ -38,13 +38,13 @@ body {
 }
 
 /* Mapa */
-#map {
+/* #map {
         width: 90%;
         height: 380px;
         border-radius: 15px;
         margin: 0 auto;
         margin-top: 10px;
-    }
+} */
 
 .trajeto {
   width: 100%;

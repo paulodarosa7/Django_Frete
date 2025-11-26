@@ -487,6 +487,9 @@ def cadastro_freteiro(request):
     return render(request, 'tela_cadastro_freteiro.html')  
 
 # fretes e freteiros
+from django.shortcuts import render, redirect, get_object_or_404
+from .models import solicitarFrete
+
 def aceitar_frete(request, frete_id):
     freteiro_id = request.session.get('freteiro_id')
     if not freteiro_id:
@@ -494,18 +497,19 @@ def aceitar_frete(request, frete_id):
 
     frete = get_object_or_404(solicitarFrete, id=frete_id)
 
-    # Verifica antes de modificar
-    if frete.status != "pendente":
-        messages.error(request, "Este frete já foi aceito por outro freteiro.")
-        return redirect('fretes_disponiveis')
+    if frete.status == "pendente":
+        frete.status = "aceito"
+        frete.freteiro_id = freteiro_id
+        frete.save()
+        return render(request, 'status_frete_freteiro.html', {
+            'frete': frete,
+        })
+    else:
+        return render(request, 'tela_fretes_disponiveis.html', {
+            'frete': frete,
+            'erro': f"Puts, acho que esse frete não está disponível. Status atual: {frete.status}"
+        })
 
-    # Agora sim modifica
-    frete.status = "aceito"
-    frete.freteiro_id = freteiro_id
-    frete.save()
-
-    messages.success(request, "Frete aceito com sucesso!")
-    return redirect('status_frete', frete_id=frete.id)
 
 
 # ver fretes em andamento
@@ -527,6 +531,27 @@ def fretes_aceitos(request, id):
         'fretes': fretes,
         'freteiro': freteiro
     })
+
+def recusar_frete(request, id, frete_id):
+    freteiro_id = request.session.get('freteiro_id')
+    if not freteiro_id:
+        return redirect('login_user')
+
+    frete = get_object_or_404(solicitarFrete, id=frete_id)
+
+    # impede recusar frete que não pertence ao freteiro
+    if frete.freteiro_id != freteiro_id:
+        messages.error(request, "Você não tem permissão para recusar este frete.")
+        return redirect('fretes_aceitos', freteiro_id)
+
+    # remover o freteiro e voltar para fila
+    frete.freteiro = None
+    frete.status = "pendente"
+    frete.save()
+
+    messages.success(request, "Frete recusado com sucesso!")
+    return redirect('fretes_aceitos', id=freteiro_id)
+
 
 # gestão de fretes
 def listar_fretes(request):
@@ -669,3 +694,30 @@ def logout(request):
     request.session.flush()
     return redirect('login_user')
 
+
+#Calcular rota
+def calcular_rota(request, frete_id):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+
+        # Exemplo: pegar o frete correspondente
+        try:
+            frete = Frete.objects.get(id=frete_id)
+        except Frete.DoesNotExist:
+            return JsonResponse({'success': False, 'error': 'Frete não encontrado'})
+
+        # Salvar a rota associada ao frete
+        Rota.objects.create(
+            frete=frete,  # se você tiver FK
+            origem=data['origem'],
+            destino=data['destino'],
+            distancia=float(data['distancia']),
+            custo=float(data['custo']),
+            tempo_minutos=int(data['tempoMinutos'])
+        )
+
+        return JsonResponse({'success': True})
+    
+    return JsonResponse({'success': False})
+
+#apresenta a rota e custo
