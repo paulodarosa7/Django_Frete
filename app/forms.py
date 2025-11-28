@@ -1,6 +1,6 @@
 from django import forms
 
-from .models import Usuario, Freteiro, solicitarFrete, Rota
+from .models import Usuario, Freteiro, solicitarFrete
 
 class UsuarioForm(forms.ModelForm):
     class Meta:
@@ -21,21 +21,10 @@ class FreteiroForm(forms.ModelForm):
 class FreteForm(forms.ModelForm):
     class Meta:
         model = solicitarFrete
-        fields = ['produto', 'peso', 'largura', 'altura', 'valor', 'endereco_coleta', 'endereco_entrega']
+        fields = ['produto', 'peso', 'largura', 'comprimento','altura', 'valor', 'endereco_coleta', 'endereco_entrega']
         widgets = {
             'produto': forms.Textarea(attrs={'rows': 2}),
             'endereco_coleta': forms.Textarea(attrs={'rows': 2}),
             'endereco_entrega': forms.Textarea(attrs={'rows': 2})
         }
 
-class RotaForm(forms.ModelForm):
-    class Meta:
-        model = Rota
-        fields = ['origem', 'destino', 'distancia', 'custo', 'tempo_minutos']
-        widgets = {
-            'origem': forms.TextInput(attrs={'class': 'form-control'}),
-            'destino': forms.TextInput(attrs={'class': 'form-control'}),
-            'distancia': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.01'}),
-            'custo': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.01'}),
-            'tempo_minutos': forms.NumberInput(attrs={'class': 'form-control'}),
-        }

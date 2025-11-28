@@ -6,6 +6,8 @@ from django.contrib import messages
 from .forms import UsuarioForm, FreteiroForm, FreteForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login
+from django.http import JsonResponse
+import json
 
 
 
@@ -146,15 +148,16 @@ def solicitar_frete(request, id):
     usuario_logado = Usuario.objects.get(id=usuario_id)
 
     if request.method == 'POST':
-        novo_frete = solicitarFrete()
+        frete = solicitarFrete()
 
-        novo_frete.produto = request.POST.get('produto')
-        novo_frete.peso = request.POST.get('peso')
-        novo_frete.largura = request.POST.get('largura')
-        novo_frete.altura = request.POST.get('altura')
-        novo_frete.valor = request.POST.get('valor')
-        novo_frete.endereco_coleta = request.POST.get('endereco_coleta')
-        novo_frete.endereco_entrega = request.POST.get('endereco_entrega')
+        frete.produto = request.POST.get('produto')
+        frete.peso = request.POST.get('peso')
+        frete.largura = request.POST.get('largura')
+        frete.altura = request.POST.get('altura')
+        frete.comprimento = request.POST.get('comprimento')
+        frete.valor = request.POST.get('valor')
+        frete.endereco_coleta = request.POST.get('endereco_coleta')
+        frete.endereco_entrega = request.POST.get('endereco_entrega')
 
         dia = request.POST.get('dia')
         mes = request.POST.get('mes')
@@ -170,15 +173,15 @@ def solicitar_frete(request, id):
             messages.error(request, "A data de entrega não pode ser no passado.")
             return redirect('solicitar_frete', id=usuario_id)
 
-        novo_frete.data_solicitacao = data_solicitacao
+        frete.data_solicitacao = data_solicitacao
 
-        novo_frete.hora_solicitacao = request.POST.get('hora_solicitacao')
+        frete.hora_solicitacao = request.POST.get('hora_solicitacao')
 
 
-        novo_frete.status = "pendente"
-        novo_frete.usuario = usuario_logado
+        frete.status = "pendente"
+        frete.usuario = usuario_logado
 
-        novo_frete.save()
+        frete.save()
         return redirect('frete_concluido', id=usuario_id)
 
     return render(request, 'tela_solicitar_frete.html', {'usuario': usuario_logado})
@@ -280,21 +283,22 @@ def editar_frete(request, frete_id):
     if not usuario_id:
         return redirect('login_user')
     
-    frete = get_object_or_404(solicitarFrete, id=frete_id)
+    novo_frete = get_object_or_404(solicitarFrete, id=frete_id)
     
     if request.method == "POST":
-        frete.produto = request.POST.get("produto")
-        frete.peso = request.POST.get("peso")
-        frete.largura = request.POST.get("largura")
-        frete.altura = request.POST.get("altura")
-        frete.endereco_coleta = request.POST.get("endereco_coleta")
-        frete.endereco_entrega = request.POST.get("endereco_entrega")
+        novo_frete.produto = request.POST.get("produto")
+        novo_frete.peso = request.POST.get("peso")
+        novo_frete.largura = request.POST.get("largura")
+        novo_frete.altura = request.POST.get("altura")
+        novo_frete.comprimento = request.POST.get("comprimento")
+        novo_frete.endereco_coleta = request.POST.get("endereco_coleta")
+        novo_frete.endereco_entrega = request.POST.get("endereco_entrega")
         
-        frete.dia = request.POST.get('dia')
-        frete.mes = request.POST.get('mes')
-        frete.ano = request.POST.get('ano')
+        novo_frete.dia = request.POST.get('dia')
+        novo_frete.mes = request.POST.get('mes')
+        novo_frete.ano = request.POST.get('ano')
         try:
-            nova_data_solicitacao = date(int(frete.ano), int(frete.mes), int(frete.dia))
+            nova_data_solicitacao = date(int(novo_frete.ano), int(novo_frete.mes), int(novo_frete.dia))
         except ValueError:
             messages.error(request, "Data inválida. Verifique o dia, mês e ano.")
             return redirect('editar_frete', frete_id=frete_id)
@@ -303,12 +307,12 @@ def editar_frete(request, frete_id):
             messages.error(request, "A data de entrega não pode ser no passado.")
             return redirect('editar_frete', frete_id=frete_id)   
         
-        frete.data_solicitacao = nova_data_solicitacao
-        frete.hora_solicitacao = request.POST.get("hora_solicitacao")
-        frete.peso = request.POST.get("peso")
-        frete.save()
+        novo_frete.data_solicitacao = nova_data_solicitacao
+        novo_frete.hora_solicitacao = request.POST.get("hora_solicitacao")
+        novo_frete.peso = request.POST.get("peso")
+        novo_frete.save()
         return redirect('fretes_solicitados',  id=request.session.get('usuario_id'))
-    return render(request, 'tela_editar_frete.html',  {'frete': frete})
+    return render(request, 'tela_editar_frete.html',  {'frete': novo_frete})
         
 
 # interação entre usuarios e freteiros
@@ -697,27 +701,54 @@ def logout(request):
 
 #Calcular rota
 def calcular_rota(request, frete_id):
-    if request.method == 'POST':
-        data = json.loads(request.body)
-
-        # Exemplo: pegar o frete correspondente
-        try:
-            frete = Frete.objects.get(id=frete_id)
-        except Frete.DoesNotExist:
-            return JsonResponse({'success': False, 'error': 'Frete não encontrado'})
-
-        # Salvar a rota associada ao frete
-        Rota.objects.create(
-            frete=frete,  # se você tiver FK
-            origem=data['origem'],
-            destino=data['destino'],
-            distancia=float(data['distancia']),
-            custo=float(data['custo']),
-            tempo_minutos=int(data['tempoMinutos'])
-        )
-
-        return JsonResponse({'success': True})
+    if request.method != 'POST':
+        return JsonResponse({"error": "Método não permitido"}, status=405)
     
-    return JsonResponse({'success': False})
+    try:
+        frete = solicitarFrete.objects.get(id=frete_id)
+    except solicitarFrete.DoesNotExist:
+        return JsonResponse({"error": "Frete não encontrado"}, status=404)
+
+#dados frete
+    data = json.loads(request.body) #  recebe os dados do javascript
+    peso_bruto = float(frete.peso)  # em kg
+    comprimento = float(frete.comprimento) 
+    altura =  float(frete.altura) 
+    largura = float(frete.largura) # em kg    
+    distancia = float(data.get("distancia_km"))
+
+    
+    #calcular frete    
+    #converter cm p m
+    comprimento = comprimento / 100
+    altura = altura / 100
+    largura = largura / 100
+        
+    peso_cubado =  comprimento * altura * largura * 300  # fórmula do peso cubado em kg
+
+    # determina o peso efetivo pelo maior peso
+    peso_efetivo = max(peso_bruto, peso_cubado)
+    
+    peso_minimo = 20  # peso mínimo em kg
+    peso_excedente=max(0, peso_efetivo-20)
+    
+    custo_km = 2.00  # custo por km
+    custo_p_kg = 0.50  # custo por kg acima do peso mínimo (20kg)
+    preco_minimo = 50.00  # custo mínimo do frete
+    
+    valor_custo = (distancia * custo_km) + (peso_excedente * custo_p_kg)
+    print(valor_custo)
+    if valor_custo < preco_minimo:
+        valor_custo = preco_minimo
+
+    frete.distancia_km = distancia
+    frete.custo_frete = valor_custo
+    frete.save()
+
+    return JsonResponse({
+        'success': True,
+        'valor_custo': valor_custo
+    })
+
 
 #apresenta a rota e custo
