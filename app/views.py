@@ -261,9 +261,9 @@ def status_frete(request, frete_id):
     
 #usuario cancela o frete
 def cancelar_frete(request, frete_id):
-    freteiro_id = request.session.get('freteiro_id') # verifica se o freteiro está logado
-    if not freteiro_id:
-        return redirect('login_freteiro')
+    usuario_id = request.session.get('usuario_id') # verifica se o freteiro está logado
+    if not usuario_id:
+        return redirect('login_user')
 
     frete = get_object_or_404(solicitarFrete, id=frete_id)
 
