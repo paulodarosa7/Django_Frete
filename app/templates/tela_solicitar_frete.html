@@ -26,15 +26,15 @@
         <p class="title">medidas:</p>
         <div class="aniversario">
           <div class="input-sufixo">
-            <input type="text" name="largura" placeholder="largura" required>
+            <input type="number" step="0.01" name="largura" placeholder="largura" required>
             <span>cm</span>
           </div>
           <div class="input-sufixo">
-            <input type="text" name="altura" placeholder="altura" required>
+            <input type="number" step="0.01" name="altura" placeholder="altura" required>
             <span>cm</span>
           </div>
             <div class="input-sufixo">
-              <input type="text" name="comprimento" placeholder="comprimento" required>
+              <input type="number" step="0.01" name="comprimento" placeholder="comprimento" required>
             <span>cm</span>
           </div>
         </div>
@@ -42,7 +42,7 @@
 
         <div class="input-prefixo">
           <span>R$</span>
-          <input type="text" name="valor" placeholder="valor do item" required>
+          <input type="number" step='0.01' name="valor" placeholder="valor do item" required>
         </div>
 <div style="position: relative; width: 100%; margin-bottom: 10px;">
   <input
@@ -73,13 +73,18 @@
         <div class="aniversario">
             <input name="dia" type="number" min="1" max="31" placeholder="dia" required>
             <input name="mes" type="number" min="1" max="12" placeholder="mês" required>
-            <input name="ano" type="number" min="2024" max="2222" placeholder="ano" required>
+            <input name="ano" type="number" min="2025" max="2222" placeholder="ano" required>
         </div>
+
+
 
         <input id="hora" name="hora_solicitacao" type="time" placeholder="hh:mm" style="margin-top:10px; text-align:center;" required>
 
 
         <button id="btnConcluir" type="submit">concluir</button>
+            {% if erro %}
+                <p id="erro" class="erro">Data está inválida</p>
+            {% endif %}
     </form>
 </div>
 {% endblock %}

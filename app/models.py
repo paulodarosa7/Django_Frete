@@ -8,8 +8,7 @@ class Usuario(models.Model):
     tel = models.CharField(max_length=15)
     cpf = models.CharField(max_length=14, unique=True)
     data_nascimento = models.DateField()
-
-
+    
     def __str__(self):
         return self.nome
 
@@ -45,7 +44,8 @@ class solicitarFrete(models.Model):
     status = models.CharField(max_length=20, default="pendente") # determina o status atual do frete
     # um para muitos
     freteiro = models.ForeignKey("Freteiro", null=True, on_delete=models.SET_NULL)  # chave estrangeira de freteiro, para o mesmo poder aceitar um frete
-                                                                                    #  de um requerente. Se está nulo é porque ninguem aceirou a corrida     
+                                                                                    #  de um requerente. Se está nulo é porque ninguem aceirou a corrida 
+                                                                                    # nao pode ser cascade pq se o freteiro for deletado, o frete continua existindo    
 
 
     def __str__(self):
